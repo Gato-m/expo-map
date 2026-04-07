@@ -4,7 +4,7 @@ import { createTheme } from "@shopify/restyle";
 export const LightPalette = {
   primary: "#f3f3f3",
   primaryDark: "#D4D4D8",
-  accent: "#f0983e",
+  accent: "#e18326",
   gray100: "#f4f4f4",
   gray200: "#dbdddb",
   gray400: "#9a9b9b",

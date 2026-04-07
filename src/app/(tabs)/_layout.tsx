@@ -1,7 +1,7 @@
 import { useTheme } from "@shopify/restyle";
 import { Tabs } from "expo-router";
+import { Platform } from "react-native";
 import TabBarIcon from "../../components/TabBarIcon";
-import { ThemeToggleButton } from "../../components/ThemeToggleButton";
 import { Theme } from "../../theme";
 
 export default function TabsLayout() {
@@ -11,30 +11,62 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={{
         tabBarStyle: {
-          backgroundColor: theme.colors.background,
-          borderTopColor: theme.colors.gray200,
+          position: "absolute",
+          marginLeft: 74,
+          marginRight: 74,
+          bottom: 34,
+          height: 60,
+          paddingTop: 9,
+          paddingBottom: 0,
+          borderTopWidth: 1,
+          borderWidth: 1,
+          borderRadius: 30,
+          borderColor: theme.colors.background,
+          // borderTopColor: theme.colors.gray100,
+          backgroundColor: theme.colors.primary,
+          elevation: 0,
+          shadowColor: theme.colors.text,
+          shadowOpacity: Platform.OS === "ios" ? 0.16 : 0,
+          shadowRadius: 16,
+          shadowOffset: {
+            width: 0,
+            height: 8,
+          },
         },
-        tabBarActiveTintColor: theme.colors.accent || theme.colors.text,
+        tabBarItemStyle: {
+          margin: 0,
+          height: "100%",
+          borderRadius: 24,
+          alignItems: "center",
+          justifyContent: "center",
+          paddingTop: 0,
+          paddingBottom: 0,
+        },
+        tabBarIconStyle: {
+          marginTop: 0,
+          marginBottom: 0,
+        },
+        tabBarShowLabel: false,
+        tabBarHideOnKeyboard: true,
+        tabBarActiveTintColor: theme.colors.white,
         tabBarInactiveTintColor: theme.colors.text,
-        headerStyle: {
-          backgroundColor: theme.colors.background,
-        },
-        headerTitleStyle: {
-          color: theme.colors.text,
-        },
-        headerTintColor: theme.colors.text,
-        headerRight: () => <ThemeToggleButton />,
-        headerRightContainerStyle: {
-          paddingRight: 16,
-        },
+        headerShown: false,
       }}
     >
       <Tabs.Screen
         name="home"
         options={{
           title: "Home",
-          tabBarIcon: ({ color }) => (
-            <TabBarIcon name="home-outline" color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon
+              name="map-outline"
+              color={color}
+              focused={focused}
+              activeBackgroundColor={theme.colors.accent}
+              inactiveBackgroundColor={theme.colors.primary}
+              activeBorderColor={theme.colors.accent}
+              inactiveBorderColor={theme.colors.gray400}
+            />
           ),
         }}
       />
@@ -42,8 +74,16 @@ export default function TabsLayout() {
         name="search"
         options={{
           title: "Search",
-          tabBarIcon: ({ color }) => (
-            <TabBarIcon name="search-outline" color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon
+              name="list-outline"
+              color={color}
+              focused={focused}
+              activeBackgroundColor={theme.colors.accent}
+              inactiveBackgroundColor={theme.colors.primary}
+              activeBorderColor={theme.colors.accent}
+              inactiveBorderColor={theme.colors.gray400}
+            />
           ),
         }}
       />
@@ -51,8 +91,16 @@ export default function TabsLayout() {
         name="profile"
         options={{
           title: "Profile",
-          tabBarIcon: ({ color }) => (
-            <TabBarIcon name="person-outline" color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon
+              name="information-circle-outline"
+              color={color}
+              focused={focused}
+              activeBackgroundColor={theme.colors.accent}
+              inactiveBackgroundColor={theme.colors.primary}
+              activeBorderColor={theme.colors.accent}
+              inactiveBorderColor={theme.colors.gray400}
+            />
           ),
         }}
       />
