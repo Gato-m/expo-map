@@ -1,6 +1,5 @@
 import { useTheme } from "@shopify/restyle";
 import { Tabs } from "expo-router";
-import { Platform } from "react-native";
 import TabBarIcon from "../../components/TabBarIcon";
 import { Theme } from "../../theme";
 
@@ -12,26 +11,13 @@ export default function TabsLayout() {
       screenOptions={{
         tabBarStyle: {
           position: "absolute",
-          marginLeft: 74,
-          marginRight: 74,
+          marginLeft: 84,
+          marginRight: 84,
           bottom: 34,
           height: 60,
           paddingTop: 9,
           paddingBottom: 0,
-          borderTopWidth: 1,
-          borderWidth: 1,
-          borderRadius: 30,
-          borderColor: theme.colors.background,
-          // borderTopColor: theme.colors.gray100,
-          backgroundColor: theme.colors.primary,
-          elevation: 0,
-          shadowColor: theme.colors.text,
-          shadowOpacity: Platform.OS === "ios" ? 0.16 : 0,
-          shadowRadius: 16,
-          shadowOffset: {
-            width: 0,
-            height: 8,
-          },
+          backgroundColor: "transparent",
         },
         tabBarItemStyle: {
           margin: 0,
@@ -63,9 +49,9 @@ export default function TabsLayout() {
               color={color}
               focused={focused}
               activeBackgroundColor={theme.colors.accent}
-              inactiveBackgroundColor={theme.colors.primary}
-              activeBorderColor={theme.colors.accent}
-              inactiveBorderColor={theme.colors.gray400}
+              inactiveBackgroundColor={theme.colors.gray800}
+              activeBorderColor={theme.colors.white}
+              inactiveBorderColor={theme.colors.gray800}
             />
           ),
         }}
@@ -80,9 +66,9 @@ export default function TabsLayout() {
               color={color}
               focused={focused}
               activeBackgroundColor={theme.colors.accent}
-              inactiveBackgroundColor={theme.colors.primary}
-              activeBorderColor={theme.colors.accent}
-              inactiveBorderColor={theme.colors.gray400}
+              inactiveBackgroundColor={theme.colors.gray800}
+              activeBorderColor={theme.colors.white}
+              inactiveBorderColor={theme.colors.gray800}
             />
           ),
         }}
@@ -97,9 +83,9 @@ export default function TabsLayout() {
               color={color}
               focused={focused}
               activeBackgroundColor={theme.colors.accent}
-              inactiveBackgroundColor={theme.colors.primary}
-              activeBorderColor={theme.colors.accent}
-              inactiveBorderColor={theme.colors.gray400}
+              inactiveBackgroundColor={theme.colors.gray800}
+              activeBorderColor={theme.colors.white}
+              inactiveBorderColor={theme.colors.gray800}
             />
           ),
         }}

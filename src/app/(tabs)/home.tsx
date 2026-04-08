@@ -1,7 +1,7 @@
 import { useTheme } from "@shopify/restyle";
 import { AppleMaps, GoogleMaps } from "expo-maps";
 import React, { useMemo, useRef, useState } from "react";
-import { Platform, Pressable, StyleSheet, View } from "react-native";
+import { Image, Platform, Pressable, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { ThemedText } from "../../components";
@@ -17,6 +17,35 @@ const CENTER = {
 const DEFAULT_ZOOM = 14;
 const CHIPS_TOP_OFFSET = 26;
 const CONTROLS_TOP_OFFSET = CHIPS_TOP_OFFSET;
+const TOP_OVERLAY_EXTRA_HEIGHT = 170;
+const TAB_BAR_HEIGHT = 60;
+const TAB_BAR_BOTTOM_OFFSET = 34;
+const TAB_BAR_TOTAL_OFFSET = TAB_BAR_HEIGHT + TAB_BAR_BOTTOM_OFFSET;
+const BG_TOP = require("../../../assets/images/bg_top.png");
+const BG_BOTTOM = require("../../../assets/images/bg_bottom.png");
+const BG_BOTTOM_RATIO =
+  Image.resolveAssetSource(BG_BOTTOM).width /
+  Image.resolveAssetSource(BG_BOTTOM).height;
+const GOOGLE_MAP_STYLE_NO_POI = JSON.stringify([
+  {
+    featureType: "poi",
+    stylers: [{ visibility: "off" }],
+  },
+  {
+    featureType: "transit",
+    stylers: [{ visibility: "off" }],
+  },
+  {
+    featureType: "road",
+    elementType: "labels.icon",
+    stylers: [{ visibility: "off" }],
+  },
+  {
+    featureType: "road.highway",
+    elementType: "labels.text",
+    stylers: [{ visibility: "off" }],
+  },
+]);
 
 // ─── Filter definitions ───────────────────────────────────────────────────────
 
@@ -154,6 +183,38 @@ export default function HomeScreen() {
     </View>
   );
 
+  const topOverlay = (
+    <View
+      pointerEvents="none"
+      style={[
+        styles.topOverlay,
+        {
+          top: -45,
+          height: insets.top + CHIPS_TOP_OFFSET + TOP_OVERLAY_EXTRA_HEIGHT,
+        },
+      ]}
+    >
+      <Image
+        source={BG_TOP}
+        style={styles.topOverlayImage}
+        resizeMode="contain"
+      />
+    </View>
+  );
+
+  const bottomOverlay = (
+    <View
+      pointerEvents="none"
+      style={[styles.bottomOverlay, { bottom: -TAB_BAR_TOTAL_OFFSET }]}
+    >
+      <Image
+        source={BG_BOTTOM}
+        style={styles.bottomOverlayImage}
+        resizeMode="contain"
+      />
+    </View>
+  );
+
   // ─── Platforms ──────────────────────────────────────────────────────────────
 
   if (Platform.OS === "ios") {
@@ -168,9 +229,17 @@ export default function HomeScreen() {
               : AppleMaps.MapColorScheme.LIGHT
           }
           cameraPosition={initialCameraPosition}
-          properties={{ mapType: AppleMaps.MapType.STANDARD }}
-          uiSettings={{ myLocationButtonEnabled: false }}
+          properties={{
+            mapType: AppleMaps.MapType.STANDARD,
+            pointsOfInterest: { including: [] },
+          }}
+          uiSettings={{
+            myLocationButtonEnabled: false,
+            togglePitchEnabled: true,
+          }}
         />
+        {topOverlay}
+        {bottomOverlay}
         {controls}
         {filterChips}
       </View>
@@ -189,9 +258,19 @@ export default function HomeScreen() {
               : GoogleMaps.MapColorScheme.LIGHT
           }
           cameraPosition={initialCameraPosition}
-          properties={{ mapType: GoogleMaps.MapType.NORMAL }}
-          uiSettings={{ myLocationButtonEnabled: false }}
+          properties={{
+            mapType: GoogleMaps.MapType.NORMAL,
+            isBuildingEnabled: true,
+            mapStyleOptions: { json: GOOGLE_MAP_STYLE_NO_POI },
+          }}
+          uiSettings={{
+            myLocationButtonEnabled: false,
+            tiltGesturesEnabled: true,
+            togglePitchEnabled: true,
+          }}
         />
+        {topOverlay}
+        {bottomOverlay}
         {controls}
         {filterChips}
       </View>
@@ -216,12 +295,43 @@ const styles = StyleSheet.create({
   map: {
     flex: 1,
   },
+  topOverlay: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    zIndex: 1,
+    overflow: "hidden",
+  },
+  topOverlayImage: {
+    width: "100%",
+    height: "100%",
+  },
+  bottomOverlay: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    zIndex: 1,
+    overflow: "hidden",
+  },
+  bottomOverlayImage: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: -50,
+    width: "100%",
+    aspectRatio: BG_BOTTOM_RATIO,
+    maxWidth: "100%",
+    alignSelf: "stretch",
+  },
   // Top-right control column
   controls: {
     position: "absolute",
     right: 16,
     gap: 10,
     alignItems: "center",
+    zIndex: 3,
   },
   circleButton: {
     width: 38,
@@ -236,6 +346,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 12,
     right: 72,
+    zIndex: 3,
   },
   filtersContent: {
     flexDirection: "row",
