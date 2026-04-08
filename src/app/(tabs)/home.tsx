@@ -23,6 +23,7 @@ const TAB_BAR_BOTTOM_OFFSET = 34;
 const TAB_BAR_TOTAL_OFFSET = TAB_BAR_HEIGHT + TAB_BAR_BOTTOM_OFFSET;
 const BG_TOP = require("../../../assets/images/bg_top.png");
 const BG_BOTTOM = require("../../../assets/images/bg_bottom.png");
+const EVENTS_DATA = require("../../../assets/m100assets/M100_data_events.json");
 const BG_BOTTOM_RATIO =
   Image.resolveAssetSource(BG_BOTTOM).width /
   Image.resolveAssetSource(BG_BOTTOM).height;
@@ -46,6 +47,13 @@ const GOOGLE_MAP_STYLE_NO_POI = JSON.stringify([
     stylers: [{ visibility: "off" }],
   },
 ]);
+
+type EventRecord = {
+  pasakums?: string;
+  norisesVieta?: string;
+  lat?: number | string;
+  lon?: number | string;
+};
 
 // ─── Filter definitions ───────────────────────────────────────────────────────
 
@@ -82,6 +90,58 @@ export default function HomeScreen() {
   const googleMapRef = useRef<GoogleMaps.MapView>(null);
 
   const [activeFilters, setActiveFilters] = useState<Set<FilterId>>(new Set());
+
+  const eventPoints = useMemo(() => {
+    const items = Array.isArray(EVENTS_DATA) ? EVENTS_DATA : [];
+    return items
+      .map((raw: unknown, index: number) => {
+        const item = (raw ?? {}) as EventRecord;
+        const latitude = Number(item.lat);
+        const longitude = Number(item.lon);
+
+        if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+          return null;
+        }
+
+        return {
+          id: String(index),
+          coordinates: { latitude, longitude },
+          title: String(item.pasakums ?? "Pasakums"),
+          snippet: String(item.norisesVieta ?? ""),
+        };
+      })
+      .filter(Boolean) as Array<{
+      id: string;
+      coordinates: { latitude: number; longitude: number };
+      title: string;
+      snippet: string;
+    }>;
+  }, []);
+
+  const googleMarkers = useMemo(
+    () =>
+      eventPoints.map((event) => ({
+        id: event.id,
+        coordinates: event.coordinates,
+        title: event.title,
+        snippet: event.snippet,
+        showCallout: true,
+        anchor: { x: 0.5, y: 1 },
+      })),
+    [eventPoints],
+  );
+
+  const appleMarkers = useMemo(
+    () =>
+      eventPoints.map((event) => ({
+        id: event.id,
+        coordinates: event.coordinates,
+        title: event.title,
+        systemImage: "mappin.circle.fill",
+        tintColor: theme.colors.accent,
+      })),
+    [eventPoints, theme.colors.accent],
+  );
 
   const initialCameraPosition = useMemo(
     () => ({ coordinates: CENTER, zoom: DEFAULT_ZOOM }),
@@ -223,6 +283,7 @@ export default function HomeScreen() {
         <AppleMaps.View
           ref={appleMapRef}
           style={styles.map}
+          markers={appleMarkers}
           colorScheme={
             isDarkMode
               ? AppleMaps.MapColorScheme.DARK
@@ -252,6 +313,7 @@ export default function HomeScreen() {
         <GoogleMaps.View
           ref={googleMapRef}
           style={styles.map}
+          markers={googleMarkers}
           colorScheme={
             isDarkMode
               ? GoogleMaps.MapColorScheme.DARK
